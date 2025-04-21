@@ -5,17 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Testimonial extends Model
+class Rating extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_testimonial';
+    protected $primaryKey = 'id_rating';
 
     protected $fillable = [
-        'id_user', 'saran_masukan'
+        'id_user', 'id_galeri', 'rating'
     ];
 
     public function user() {
         return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function galeri() {
+        return $this->belongsTo(Galeri::class, 'id_galeri');
     }
 }

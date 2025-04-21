@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-// import
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -19,11 +17,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $primaryKey = 'id_user';
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'avatar',
+        'name', 'password', 'email', 'foto_anggota', 'role'
     ];
 
     /**
@@ -34,10 +31,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
-        
     ];
 
     /**
@@ -47,12 +40,18 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    //buat method untuk fitur mutator
-    protected function avatar(): Attribute
-    {
-        return Attribute::make(get: fn ($value) => $value != '' ? asset('/storage/avatars/' . $value) :'https://ui-avatars.com/api/?name=' . str_replace(' ', '+', $this->name) .'&background=4e73df&color=ffffff&size=100',
-        );
+    public function galeris() {
+        return $this->hasMany(Galeri::class, 'id_user');
+    }
+
+    public function testimonials() {
+        return $this->hasMany(Testimonial::class, 'id_user');
+    }
+
+    public function ratings() {
+        return $this->hasMany(Rating::class, 'id_user');
     }
 }

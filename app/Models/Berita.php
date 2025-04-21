@@ -4,25 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// import
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class berita extends Model
+class Berita extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'image',
-        'judul',
-        'deskripsi',
-        'link_berita'
-    ];
+    protected $primaryKey = 'id_berita';
 
-    // method untuk tambah fitur accessor
-    protected function image(): Attribute
-    {
-        return Attribute::make(
-            get: fn($value) => asset('/storage/beritas/' . $value),
-        );
-    }
+    protected $fillable = [
+        'foto_berita', 'judul_berita', 'deskripsi_berita', 'link_berita'
+    ];
 }
