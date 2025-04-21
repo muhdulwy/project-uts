@@ -12,5 +12,10 @@
         dari berbagai latar belakang. Kami percaya bahwa melalui bonsai, kita dapat belajar tentang kesabaran, seni, dan
         keindahan hidup yang sederhana namun mendalam.
     </p>
+    <p class="mt-4 text-gray-700">
+        Sebagai bagian dari jaringan nasional PPBI, kami juga aktif menjalin kolaborasi dengan komunitas bonsai dari daerah lain, 
+        menghadirkan narasumber berpengalaman, serta membuka ruang bagi generasi muda untuk mengenal dan mencintai seni bonsai. 
+        Melalui kegiatan yang berkelanjutan, PPBI Banda Aceh berkomitmen menjadi motor penggerak dalam mempopulerkan bonsai sebagai bagian dari budaya dan gaya hidup hijau di Aceh.
+    </p>
 </div>
 @endsection

@@ -48,6 +48,6 @@ class PublicController extends Controller
 
     public function beranda()
     {
-        return view('welcome'); // atau halaman landing utama kamu
+        return view('home'); // atau halaman landing utama kamu
     }
 }

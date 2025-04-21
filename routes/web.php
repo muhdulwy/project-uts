@@ -44,18 +44,17 @@ Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
 
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', [LoginController::class, 'index'])->name('admin.dashboard.index');
-    Route::resource('/category', CategoryController::class, ['as' => 'admin']);
-    Route::resource('/anggota', AnggotaController::class, ['as' => 'admin'])->parameters([
-        'anggota' => 'anggota'
-    ]);
-    Route::resource('/berita', BeritaController::class, ['as' => 'admin'])->parameters([
-        'berita' => 'berita'
+    Route::get('/dashboard', [LoginController::class, 'index'])->name('dashboard.admin.index');
+
+    Route::resource('/berita', BeritaController::class, [
+        'as' => 'admin', // nama route akan menjadi admin.berita.index, admin.berita.create, dll
+        'parameters' => ['berita' => 'berita']
     ]);
 });
 
-Route::middleware(['auth', 'role:anggota'])->group(function () {
+Route::prefix('anggota')->middleware(['auth', 'role:anggota'])->group(function () {
     // route khusus anggota
+    Route::get('/dashboard', [LoginController::class, 'index'])->name('dashboard.anggota.index');
 });
 
 Route::middleware(['auth', 'role:admin,anggota'])->group(function () {
