@@ -29,33 +29,19 @@ Route::get('/', function () {
     return view('Home'); //halaman index langsung ke login
 });
 
-Route::get('/struktur', function () {
-    return view('struktur'); //halaman index langsung ke login
-});
+use App\Http\Controllers\PublicController;
 
-Route::get('/tentang', function () {
-    return view('tentang'); //halaman index langsung ke login
-});
+Route::get('/', [PublicController::class, 'beranda'])->name('beranda');
 
-// Route::get('/testimonial', [TestimonialController::class, 'index']);
-Route::get('/testimonial', function () {
-    return view('testimonial'); //halaman index langsung ke login
-});
-
-Route::get('/berita', [BeritaController::class, 'showPublik'])->name('berita.publik');
+Route::get('/anggota', [PublicController::class, 'anggota'])->name('anggota');
+Route::get('/struktur', [PublicController::class, 'struktur'])->name('struktur');
+Route::get('/berita', [PublicController::class, 'berita'])->name('berita');
+Route::get('/galeri', [PublicController::class, 'galeri'])->name('galeri');
+Route::get('/testimonial', [PublicController::class, 'testimonial'])->name('testimonial');
+Route::get('/tentang', [PublicController::class, 'tentang'])->name('tentang');
 
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
 
-// Route::prefix('admin')->middleware('auth')->group(function () {
-//     Route::get('/dashboard', [LoginController::class, 'index'])->name('admin.dashboard.index');
-//     Route::resource('/category', CategoryController::class, ['as' => 'admin']);
-//     Route::resource('/anggota', AnggotaController::class, ['as' => 'admin'])->parameters([
-//         'anggota' => 'anggota'
-//     ]);
-//     Route::resource('/berita', BeritaController::class, ['as' => 'admin'])->parameters([
-//         'berita' => 'berita'
-//     ]);
-// });
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [LoginController::class, 'index'])->name('admin.dashboard.index');
