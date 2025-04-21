@@ -12,10 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet" />
 </head>
 
-<body class="bg-gray-100 font-roboto">
+<body class="bg-gray-100 font-roboto relative bg-cover bg-center min-h-screen"
+style="background-image: url('{{ asset('image/bonsai.jpg') }}');">
     <!-- Header -->
-    <section class="relative bg-cover bg-center min-h-screen"
-        style="background-image: url('{{ asset('image/bonsai.jpg') }}');">
+    <section >
         <div class="absolute inset-0 bg-black opacity-50">
         </div>
         <header class="relative z-10">
@@ -99,17 +99,9 @@
         </header>
 
     </section>
-    <!-- Intro -->
-    <section class="py-16 bg-gray-800 text-white text-center" id="intro">
-        <div class="container mx-auto">
-            <h3 class="text-3xl font-bold mb-4">
-                SELAMAT DATANG
-            </h3>
-            <p class="text-lg">
-                Sebuah website yang menjadikan tempatnya para penggemar bonsai yang ada di daerah kota banda aceh
-            </p>
-        </div>
-    </section>
+
+    @yield('content')
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="container mx-auto text-center">
