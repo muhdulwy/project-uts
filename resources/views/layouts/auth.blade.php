@@ -16,7 +16,7 @@
         href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;5
         00;600;700&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <body class="bg-gray-100 font-poppins min-h-screen" style="background: url('{{ asset('image/bonsai.jpg') }}') no-repeat center center fixed; background-size: cover;">
         <!-- content -->
         @yield('content')
     </body>

@@ -1,9 +1,9 @@
-@extends('layouts.auth', ['title' => 'Login - Admin'])
+@extends('layouts.auth', ['title' => 'Login - Akun'])
 @section('content')
-    <div class="flex justify-center items-center h-screen bg-gray-300 px6">
+    <div class="flex justify-center items-center h-screen    px6">
         <div class="p-6 max-w-sm w-full bg-white shadow-md rounded-md">
             <div class="flex justify-center items-center">
-                <span class="text-gray-700 font-semibold text2xl">LOGIN ADMIN</span>
+                <span class="text-gray-700 font-semibold text2xl">LOGIN AKUN</span>
             </div>
             @if (session('status'))
                 <div class="bg-green-500 p-3 rounded-md shadow-sm mt-3">
@@ -38,7 +38,7 @@
                     @enderror
                 </label>
 
-                <div class="flex justify-between items-center mt-4">
+                <div class="flex justify-between items-center mt-3">
                     <div>
                         <label class="inline-flex items-center">
                             <input type="checkbox" class="form-checkbox text-indigo-600">
@@ -51,7 +51,11 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
+                <div class="mt-2 text-center text-sm text-gray-600">
+                    <p>Belum punya akun? <a href="/register" class="font-medium text-green-600 hover:text-green-500 transition-colors duration-200">Daftar disini</a></p>
+                </div>
+
+                <div class="mt-4">
                     <button type="submit"
                         class="py-2 px-4 text-center bg-indigo-600 roundedmd w-full text-white text-sm hover:bg-indigo-500 focus:outline-none">LOGIN</button>
                 </div>

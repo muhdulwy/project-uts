@@ -3,123 +3,93 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Anggota; //impor baris kode
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
-    //CRUDS TAMPIL
-    // method untuk tampilkan data anggota
+    // Menampilkan semua anggota
     public function index()
     {
-        $anggotas = Anggota::latest()->when(request()->q, function ($anggotas) {
-            $anggotas = $anggotas->where("nama_anggota", "like", "%" . request()->q . "%");
-        })->paginate(10);
-        return view("admin.anggota.index", compact("anggotas"));
+        $anggota = User::where('role', 'anggota')->get();
+        return view('dashboard.admin.anggota.index', compact('anggota'));
     }
 
-    //CRUDS INPUT
-    // method untuk panggil form input data
+    // Menampilkan form tambah anggota
     public function create()
     {
-        return view('admin.anggota.create');
+        return view('dashboard.admin.anggota.create');
     }
 
-    //method untuk kirim data dari inputan form ke tabel anggota di database
+    // Menyimpan data anggota baru
     public function store(Request $request)
-    { //method store dipanggil saat tekan tombol simpan
-        // validasi inputan
-        $this->validate($request, [
-            'nama_anggota' => 'required|unique:anggotas',
-            'image' => 'required|image|mimes:jpeg,jpg,png|max:2000',
-            'jabatan' => 'required|in:Pengurus,Anggota'
-
-
-        ]);
-
-        //kode untuk upload gambar
-        $image = $request->file('image');
-        //kode untuk simpan di folder anggotas
-        $image->storeAs('public/anggotas', $image->hashName());
-        //kode untuk menyimpan data input di database
-
-        // dd($image->hashName());
-
-        $anggota = Anggota::create([
-            'image' => $image->hashName(),
-            'nama_anggota' => $request->nama_anggota,
-            'jabatan' => $request->jabatan
-        ]);
-
-        //kondisi sekaligus redirect tampilkan pesan
-        if ($anggota) {
-            return redirect()->route('admin.anggota.index')->with(['success' => 'Data Berhasil Disimpan Kedalam Tabel Anggota']);
-        } else {
-            return redirect()->route('admin.anggota.index')->with(['error' => 'Data Tidak Berhasil Disimpan Kedalam Tabel Anggota']);
-        }
-    }
-
-    //CRUDS UBAH
-    // method untuk tampilkan data yang mau diubah
-    public function edit(Anggota $anggota)
     {
-        return view('admin.anggota.edit', compact('anggota'));
-    }
-
-    // buat method untuk kirimkan data yang diubah di form inputan
-    public function update(Request $request, Anggota $anggota)
-    {
-        //validasi inputan karena methode yang menyimpan data ke database
-        $this->validate($request, [
-            'nama_anggota' => 'required|unique:anggotas,nama_anggota,' . $anggota->id,
-            'jabatan' => 'required|unique:anggotas,jabatan,' . $anggota->id
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+            'foto_anggota' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        //percabangan IF (update tanpa gambar), else (update dengan gambar)
-        if ($request->file('image') == '') {
-            $anggota->update([
-                'nama_anggota' => $request->nama_anggota,
-                'jabatan' => $request->jabatan
-            ]);
-        } else {
-            // hapus dulu gambar sebelumnya
-            Storage::disk('local')->delete('public/anggotas/' . basename($anggota->image));
-
-            // upload file gambar yang baru
-            $image = $request->file('image');
-            $image->storeAs('public/anggotas', $image->hashName());
-
-            //update data di tabel anggota dengan data baru
-            $anggota = Anggota::findOrFail($anggota->id);
-            $anggota->update([
-                'nama_anggota' => $request->nama_anggota,
-                'jabatan' => $request->jabatan,
-                'image' => $image->hashName()
-            ]);
+        $foto = null;
+        if ($request->hasFile('foto_anggota')) {
+            $foto = $request->file('foto_anggota')->store('foto_anggota', 'public');
         }
 
-        //kondisi sekaligus redirect tampilkan pesan
-        if ($anggota) {
-            return redirect()->route('admin.anggota.index')->with(['success' => 'Data Berhasil Diubah Kedalam Tabel Anggota']);
-        } else {
-            return redirect()->route('admin.anggota.index')->with(['error' => 'Data Tidak Berhasil Diubah Kedalam Tabel Anggota']);
-        }
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'foto_anggota' => $foto,
+            'role' => 'anggota'
+        ]);
+
+        return redirect()->route('admin.anggota.index')->with('success', 'Anggota berhasil ditambahkan!');
     }
 
-    // method untuk menghapus data
+    // Menampilkan form edit anggota
+    public function edit($id)
+    {
+        $anggota = User::where('role', 'anggota')->findOrFail($id);
+        return view('dashboard.admin.anggota.edit', compact('anggota'));
+    }
+
+    // Menyimpan perubahan data anggota
+    public function update(Request $request, $id)
+    {
+        $anggota = User::where('role', 'anggota')->findOrFail($id);
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $anggota->id_user . ',id_user',
+            'foto_anggota' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+
+        if ($request->hasFile('foto_anggota')) {
+            $foto = $request->file('foto_anggota')->store('foto_anggota', 'public');
+            $anggota->foto_anggota = $foto;
+        }
+
+        $anggota->name = $request->name;
+        $anggota->email = $request->email;
+
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $anggota->password = Hash::make($request->password);
+        }
+
+        $anggota->save();
+
+        return redirect()->route('admin.anggota.index')->with('success', 'Data anggota diperbarui.');
+    }
+
+    // Menghapus anggota
     public function destroy($id)
     {
-        $anggota = Anggota::findOrFail($id);
-        // hapus dulu gambar sebelumnya
-        Storage::disk('local')->delete('public/anggotas/' . basename($anggota->image));
+        $anggota = User::where('role', 'anggota')->findOrFail($id);
         $anggota->delete();
 
-        // kondisi berhasil atau tidak menghapus data
-        if ($anggota) {
-            return response()->json(['status' => 'success']);
-        } else {
-            return response()->json(['status' => 'error']);
-        }
+        return redirect()->route('admin.anggota.index')->with('success', 'Anggota berhasil dihapus.');
     }
 }

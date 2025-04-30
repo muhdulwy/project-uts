@@ -7,7 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <link rel="shortcut icon" type="image/jpg" href="https://i.imgur.com/UyXqJLi.png" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Judul Default Website' }}</title>
+    <title>{{ $title ?? 'Dashboard PPBI Banda Aceh' }}</title>
 
 
     <!-- css -->
@@ -95,7 +95,6 @@
                     </svg>
                     <span class="mx-3">Berita</span>
                 </a>
-
             </nav>
         </div>
         <div class="flex-1 flex flex-col overflow-hidden">

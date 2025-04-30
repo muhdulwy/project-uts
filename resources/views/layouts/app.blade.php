@@ -106,25 +106,16 @@
                         </li>
                     @else
                         <li class="relative group">
-                            <a class="text-gray-700 hover:text-green-600 font-medium transition-smooth cursor-pointer flex items-center">
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                                class="text-gray-700 hover:text-green-600 font-medium transition-smooth cursor-pointer flex items-center">
                                 <span class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2 text-green-700">
                                     {{ substr(Auth::user()->name, 0, 1) }}
                                 </span>
                                 {{ Auth::user()->name }}
-                                <i class="fas fa-caret-down ml-1"></i>
                             </a>
-                            <ul class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden hidden z-50">
-                                <li>
-                                    <a class="block px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-smooth" 
-                                       href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                        @csrf
-                                    </form>
-                                </li>
-                            </ul>
+                            <form id="logout-form" action="{{route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
                         </li>
                     @endguest
                 </ul>

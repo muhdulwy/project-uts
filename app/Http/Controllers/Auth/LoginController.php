@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +24,9 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            if ( $users->role == 'admin') {
+            if ( $users->role == 'Admin') {
                 return redirect()->route('dashboard.admin.index');
-            } elseif($users->role == 'anggota') {
+            } elseif($users->role == 'Anggota') {
                 return redirect()->route('dashboard.anggota.index');
             }else{
                 return redirect()->route('dashboard.user.index');
