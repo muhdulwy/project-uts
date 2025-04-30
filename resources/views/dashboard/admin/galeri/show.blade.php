@@ -19,11 +19,11 @@
   </header>
 
   <!-- Scrollable Content -->
-  <main class="flex-1 overflow-y-auto py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+  <main class="flex-1 overflow-y-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <!-- Bonsai Card -->
       <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="md:flex">
+        <div class="md:flex min-h-0">
           <!-- Image Section -->
           <div class="md:w-1/2 p-4 sm:p-6">
             <div class="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
@@ -147,9 +147,9 @@
             <p class="mt-2 text-sm text-gray-500">Belum ada rating untuk bonsai ini</p>
           </div>
           @else
-          <div class="space-y-6 max-h-96 overflow-y-auto pr-2">
+          <div class="space-y-6">
             @foreach($galeri->ratings as $rating)
-            <div class="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
+            <div class="border-b border-gray-200 pb-6 {{ $loop->last ? '!border-0 !pb-8' : '' }}">
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
