@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\GaleriController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::get('/', function () {
 });
 
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\TestimonialController as ControllersTestimonialController;
 
 Route::get('/', [PublicController::class, 'beranda'])->name('beranda');
 
@@ -40,6 +43,8 @@ Route::get('/tentang', [PublicController::class, 'tentang'])->name('tentang');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/rating', [RatingController::class, 'store'])->name('rating.store')->middleware('auth');
+Route::post('/testimonial', [ControllersTestimonialController::class, 'store'])->middleware('auth');
 
 Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/dashboard', [LoginController::class, 'index'])->name('dashboard.admin.index');
@@ -58,6 +63,11 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
         'as' => 'admin', // menghasilkan admin.galeri.index, admin.galeri.create, dst.
         'parameters' => ['galeri' => 'galeri']
     ]);
+
+    Route::resource('/testimoni', TestimonialController::class, [
+        'as' => 'admin',
+        'parameters' => ['testimoni' => 'testimoni']
+    ])->only(['index', 'destroy']);
 });
 
 Route::prefix('anggota')->middleware(['auth', 'role:Anggota'])->group(function () {

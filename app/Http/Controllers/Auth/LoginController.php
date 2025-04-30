@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Galeri;
+use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +42,13 @@ class LoginController extends Controller
 
     public function index()
     {
-        return view('dashboard.admin.index'); // Pastikan view ini ada
+        $stats = [
+            'galeri_count' => Galeri::count(),
+            'testimonial_count' => Testimonial::count(),
+            'member_count' => User::where('role', 'user')->count(),
+            'admin_count' => User::where('role', 'admin')->count(),
+        ];
+
+        return view('dashboard.admin.index', compact('stats'));
     }
 }

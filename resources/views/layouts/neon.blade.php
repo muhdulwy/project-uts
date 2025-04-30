@@ -143,9 +143,15 @@
                 </a>
                                 
                 <a href="{{ route('admin.berita.index')}}" 
-                   class="nav-item group flex items-center rounded-lg py-3 px-4 {{ str_starts_with($currentRoute, 'admin.berita') ? 'text-white active' : 'text-gray-300 hover:text-white' }}">
+                    class="nav-item group flex items-center rounded-lg py-3 px-4 {{ str_starts_with($currentRoute, 'admin.berita') ? 'text-white active' : 'text-gray-300 hover:text-white' }}">
                     <i class="fas fa-newspaper text-lg {{ str_starts_with($currentRoute, 'admin.berita') ? 'text-neon-blue' : '' }}"></i>
                     <span class="ml-3 hidden xl:block">Berita</span>
+                </a>
+
+                <a href="{{ route('admin.testimoni.index')}}" 
+                    class="nav-item group flex items-center rounded-lg py-3 px-4 {{ str_starts_with($currentRoute, 'admin.testimoni') ? 'text-white active' : 'text-gray-300 hover:text-white' }}">
+                    <i class="fas fa-comments text-lg {{ str_starts_with($currentRoute, 'admin.testimoni') ? 'text-neon-blue' : '' }}"></i>
+                    <span class="ml-3 hidden xl:block">Testimonial</span>
                 </a>
             </nav>
 
