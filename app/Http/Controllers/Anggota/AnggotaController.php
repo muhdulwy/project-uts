@@ -3,93 +3,126 @@
 namespace App\Http\Controllers\Anggota;
 
 use App\Http\Controllers\Controller;
+use App\Models\Galeri;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AnggotaController extends Controller
 {
-    // Menampilkan semua anggota
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $anggota = User::where('role', 'anggota')->get();
-        return view('dashboard.anggota.anggota.index', compact('anggota'));
+        $galeri = Galeri::with(['user', 'ratings'])->where('id_user', Auth::id())->get();
+        return view('dashboard.anggota.index', compact('galeri'));
     }
 
-    // Menampilkan form tambah anggota
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('dashboard.anggota.anggota.create');
+        $anggota = User::where('role', 'anggota')->get();
+        return view('dashboard.anggota.create', compact('anggota'));
     }
 
-    // Menyimpan data anggota baru
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'foto_anggota' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'foto_bonsai' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'nama_bonsai' => 'required|string|max:255',
+            'nama_latin_bonsai' => 'required|string|max:255',
+            'ukuran_bonsai' => 'required|string|max:100',
+            'id_user' => 'required|exists:users,id_user',
+            'penghargaan_bonsai' => 'nullable|string|max:255'
         ]);
 
-        $foto = null;
-        if ($request->hasFile('foto_anggota')) {
-            $foto = $request->file('foto_anggota')->store('foto_anggota', 'public');
-        }
+        $fotoPath = $request->file('foto_bonsai')->store('galeri', 'public');
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'foto_anggota' => $foto,
-            'role' => 'anggota'
+        Galeri::create([
+            'foto_bonsai' => $fotoPath,
+            'nama_bonsai' => $request->nama_bonsai,
+            'nama_latin_bonsai' => $request->nama_latin_bonsai,
+            'ukuran_bonsai' => $request->ukuran_bonsai,
+            'id_user' => $request->id_user,
+            'penghargaan_bonsai' => $request->penghargaan_bonsai
         ]);
 
-        return redirect()->route('anggota.anggota.index')->with('success', 'Anggota berhasil ditambahkan!');
+        return redirect()->route('anggota.galeri.index')->with('success', 'Data galeri bonsai berhasil ditambahkan!');
     }
 
-    // Menampilkan form edit anggota
-    public function edit($id)
+    /**
+     * Display the specified resource.
+     */
+    public function show(Galeri $galeri)
     {
-        $anggota = User::where('role', 'anggota')->findOrFail($id);
-        return view('dashboard.anggota.anggota.edit', compact('anggota'));
+        $galeri->load(['user', 'ratings']);
+        $averageRating = $galeri->ratings->avg('rating') ?? 0;
+        
+        return view('dashboard.anggota.show', compact('galeri', 'averageRating'));
     }
 
-    // Menyimpan perubahan data anggota
-    public function update(Request $request, $id)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Galeri $galeri)
     {
-        $anggota = User::where('role', 'anggota')->findOrFail($id);
+        $anggota = User::where('role', 'anggota')->get();
+        return view('dashboard.anggota.edit', compact('galeri', 'anggota'));
+    }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Galeri $galeri)
+    {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $anggota->id_user . ',id_user',
-            'foto_anggota' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'foto_bonsai' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama_bonsai' => 'required|string|max:255',
+            'nama_latin_bonsai' => 'required|string|max:255',
+            'ukuran_bonsai' => 'required|string|max:100',
+            'id_user' => 'required|exists:users,id_user',
+            'penghargaan_bonsai' => 'nullable|string|max:255'
         ]);
 
-        if ($request->hasFile('foto_anggota')) {
-            $foto = $request->file('foto_anggota')->store('foto_anggota', 'public');
-            $anggota->foto_anggota = $foto;
+        $data = [
+            'nama_bonsai' => $request->nama_bonsai,
+            'nama_latin_bonsai' => $request->nama_latin_bonsai,
+            'ukuran_bonsai' => $request->ukuran_bonsai,
+            'id_user' => $request->id_user,
+            'penghargaan_bonsai' => $request->penghargaan_bonsai
+        ];
+
+        if ($request->hasFile('foto_bonsai')) {
+            // Delete old photo
+            Storage::disk('public')->delete($galeri->foto_bonsai);
+            
+            // Store new photo
+            $fotoPath = $request->file('foto_bonsai')->store('galeri', 'public');
+            $data['foto_bonsai'] = $fotoPath;
         }
 
-        $anggota->name = $request->name;
-        $anggota->email = $request->email;
+        $galeri->update($data);
 
-        // Update password jika diisi
-        if ($request->filled('password')) {
-            $anggota->password = Hash::make($request->password);
-        }
-
-        $anggota->save();
-
-        return redirect()->route('anggota.anggota.index')->with('success', 'Data anggota diperbarui.');
+        return redirect()->route('anggota.galeri.index')->with('success', 'Data galeri bonsai berhasil diperbarui!');
     }
 
-    // Menghapus anggota
-    public function destroy($id)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Galeri $galeri)
     {
-        $anggota = User::where('role', 'anggota')->findOrFail($id);
-        $anggota->delete();
-
-        return redirect()->route('anggota.anggota.index')->with('success', 'Anggota berhasil dihapus.');
+        // Delete photo from storage
+        Storage::disk('public')->delete($galeri->foto_bonsai);
+        
+        $galeri->delete();
+        
+        return redirect()->route('anggota.galeri.index')->with('success', 'Data galeri bonsai berhasil dihapus!');
     }
 }

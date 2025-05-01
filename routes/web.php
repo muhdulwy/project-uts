@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\GaleriController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Anggota\AnggotaController as AnggotaAnggotaController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -73,8 +74,9 @@ Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
 Route::prefix('anggota')->middleware(['auth', 'role:Anggota'])->group(function () {
     // route khusus anggota
     Route::get('/dashboard', [LoginController::class, 'index'])->name('dashboard.anggota.index');
-});
+    Route::resource('/galeri', AnggotaAnggotaController::class, [
+        'as' => 'anggota', // menghasilkan anggota.galeri.index, anggota.galeri.create, dst.
+        'parameters' => ['galeri' => 'galeri']
+    ]);
 
-Route::middleware(['auth', 'role:admin,anggota'])->group(function () {
-    // route admin atau anggota
 });

@@ -29,9 +29,9 @@ class LoginController extends Controller
             if ( $users->role == 'Admin') {
                 return redirect()->route('dashboard.admin.index');
             } elseif($users->role == 'Anggota') {
-                return redirect()->route('dashboard.anggota.index');
+                return redirect()->route('anggota.galeri.index');
             }else{
-                return redirect()->route('dashboard.user.index');
+                return redirect()->route('beranda');
             }
         }
         
